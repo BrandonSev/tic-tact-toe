@@ -30,7 +30,7 @@ function Line({ dir }: { dir: string }) {
       <motion.span
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className={`absolute bg-primary ${origin}`}
+        className={`absolute bg-secondary ${origin}`}
       ></motion.span>
     </AnimatePresence>
   );
