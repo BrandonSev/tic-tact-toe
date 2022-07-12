@@ -8,8 +8,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "framer-motion": "^6.4.2",
+    "js-confetti": "^0.10.2",
     "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react-dom": "^18.0.0",
+    "react-toastify": "^9.0.5"
   },
   "devDependencies": {
     "@types/react": "^18.0.0",
