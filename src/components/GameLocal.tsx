@@ -8,7 +8,7 @@ type GameProps = {
   setPlay: (value: boolean) => void;
 };
 
-function Game({ setPlay }: GameProps) {
+function GameLocal({ setPlay }: GameProps) {
   const [started, setStarted] = useState<boolean>(false);
   const [state, setState] = useState(Array(9).fill(""));
   const [turn, setTurn] = useState<boolean>(true);
@@ -96,9 +96,11 @@ function Game({ setPlay }: GameProps) {
           animate={{ x: 0, opacity: 1 }}
           transition={{ ease: "easeInOut" }}
         >
-          <h1 className="text-center text-white py-8 text-5xl">Qui va joué?</h1>
+          <h1 className="text-center text-white py-8 text-5xl">
+            Qui va jouer ?
+          </h1>
           <motion.form className="p-4 sm:p-6 bg-[#17235c] rounded-md relative">
-            <div className="flex flex-col  gap-y-4 sm:gap-y-2 text-white">
+            <div className="flex flex-col gap-y-6 sm:gap-y-8 text-white">
               <div className="flex flex-col sm:flex-row items-center gap-4">
                 <label htmlFor="name1" className="self-start sm:self-center">
                   Joueur 1:
@@ -114,7 +116,7 @@ function Game({ setPlay }: GameProps) {
                   value={playerName.player1}
                 />
               </div>
-              <div className="flex flex-col sm:flex-row items-center gap-4 h-[80px]">
+              <div className="flex flex-col sm:flex-row items-center gap-4">
                 <label htmlFor="name2" className="self-start sm:self-center">
                   Joueur 2:
                 </label>
@@ -279,4 +281,4 @@ function Game({ setPlay }: GameProps) {
   );
 }
 
-export default Game;
+export default GameLocal;

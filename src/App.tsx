@@ -1,8 +1,9 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
-import Game from "./components/Game";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import GameIa from "./components/GameIa";
+import GameLocal from "./components/GameLocal";
 
 const variants = {
   hidden: {
@@ -30,13 +31,14 @@ const variantsChild = {
 
 function App() {
   const [play, setPlay] = useState<boolean>(false);
+  const [playIa, setPlayIa] = useState<boolean>(false);
 
   return (
     <>
       <ToastContainer />
       <div className="bg-[#020b36] h-screen grid place-items-center overflow-hidden">
         <AnimatePresence>
-          {!play ? (
+          {!play && !playIa && (
             <div className="flex flex-col justify-center gap-10 overflow-hidden w-[280px] sm:w-[initial]">
               <h1 className="text-5xl sm:text-6xl uppercase text-justify">
                 <motion.span
@@ -86,7 +88,7 @@ function App() {
                 initial={{ scaleX: 0, opacity: 0 }}
                 animate={{ scaleX: 1, opacity: 1 }}
                 transition={{ ease: "circOut", delay: 1.3 }}
-                onClick={() => setPlay(true)}
+                onClick={() => setPlayIa(true)}
               >
                 Player VS Bot
               </motion.button>
@@ -100,9 +102,9 @@ function App() {
                 Multiplayer
               </motion.button>
             </div>
-          ) : (
-            <Game setPlay={setPlay} />
           )}
+          {play && <GameLocal setPlay={setPlay} />}
+          {playIa && <GameIa setPlayIa={setPlayIa} />}
         </AnimatePresence>
       </div>
     </>
