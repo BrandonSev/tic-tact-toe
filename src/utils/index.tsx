@@ -1,15 +1,22 @@
-export const calculateWinner = (state: string[]) => {
-  const lines: any = [
-    [0, 1, 2, "top-x", "width"], // [0: index, 1: index, 3: index, place line win, property for animate line]
-    [3, 4, 5, "center-x", "width"],
-    [6, 7, 8, "bottom-x", "width"],
-    [0, 3, 6, "left-y", "height"],
-    [1, 4, 7, "center-y", "height"],
-    [2, 5, 8, "right-y", "height"],
-    [0, 4, 8, "diag-left", "width"],
-    [2, 4, 6, "diag-right", "width"],
-  ];
+/* An array of arrays. Each array contains the indexes of the squares that make up a line. The last two
+elements of each array are the CSS class and the CSS property that will be used to animate the line. */
+const lines: any = [
+  [0, 1, 2, "top-x", "width"],
+  [3, 4, 5, "center-x", "width"],
+  [6, 7, 8, "bottom-x", "width"],
+  [0, 3, 6, "left-y", "height"],
+  [1, 4, 7, "center-y", "height"],
+  [2, 5, 8, "right-y", "height"],
+  [0, 4, 8, "diag-left", "width"],
+  [2, 4, 6, "diag-right", "width"],
+];
 
+/**
+ * It checks if there's a winner, if there's a draw, or if the game is still going on
+ * @param {string[]} state - string[] - The current state of the board.
+ * @returns An object with the state, winner, and direction of the win.
+ */
+export const calculateWinner = (state: string[]) => {
   for (let line of lines) {
     if (
       state[line[0]] === "" ||
@@ -37,98 +44,81 @@ export const calculateWinner = (state: string[]) => {
   return undefined;
 };
 
-export const playIaIntermediateLevel = (
-  state: string[]
-): { index?: number; newSquares?: string[] } => {
-  const lines: number[][] = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
+/**
+ * It's a function that takes an array of strings as a parameter and returns a promise that resolves to
+ * a modified array of strings
+ * @param {string[]} squares - string[]
+ */
+export const playIaRandom = async (squares: string[]) => {
+  const countLast: number[] = squares
+    .map((el, i) => (el === "" ? i : -1))
+    .filter((el) => el !== -1);
 
-  let newState: {
-    index?: number;
-    newSquares?: string[];
-  } = {};
-
-  for (let line of lines) {
+  for await (let i of squares) {
+    let random = Math.floor(Math.random() * squares.length);
     if (
-      (state[line[0]] === "o" && state[line[1]] === "o") ||
-      (state[line[1]] === "o" && state[line[2]] === "o") ||
-      (state[line[0]] === "o" && state[line[2]] === "o")
+      squares[random] === "" ||
+      countLast.length === 1 // Si ne reste qu'une case vide est que le random ne correspondent pas a une case de jeu vide
     ) {
-      if (state[line[0]] === "") {
-        newState = {
-          ...newState,
-          index: line[0],
-        };
+      squares[random] === ""
+        ? (squares[random] = "o")
+        : (squares[countLast[0]] = "o");
+      break;
+    }
+  }
+};
+
+/**
+ * If the player has two squares in a row, the computer will play the third square to block the player.
+ * If the computer has two squares in a row, it will play the third square to win.
+ * @param {string[]} squares - string[]
+ */
+export const playIaIntermediateLevel = async (squares: string[]) => {
+  let find = false;
+  for await (let line of lines) {
+    if (
+      (squares[line[0]] === "o" && squares[line[1]] === "o") ||
+      (squares[line[1]] === "o" && squares[line[2]] === "o") ||
+      (squares[line[0]] === "o" && squares[line[2]] === "o")
+    ) {
+      if (squares[line[0]] === "") {
+        squares[line[0]] = "o";
+        find = true;
         break;
       }
-      if (state[line[1]] === "") {
-        newState = {
-          ...newState,
-          index: line[1],
-        };
+      if (squares[line[1]] === "") {
+        squares[line[1]] = "o";
+        find = true;
         break;
       }
-      if (state[line[2]] === "") {
-        newState = {
-          ...newState,
-          index: line[2],
-        };
+      if (squares[line[2]] === "") {
+        squares[line[2]] = "o";
+        find = true;
         break;
       }
     } else if (
-      (state[line[0]] === "x" && state[line[1]] === "x") ||
-      (state[line[1]] === "x" && state[line[2]] === "x") ||
-      (state[line[0]] === "x" && state[line[2]] === "x")
+      (squares[line[0]] === "x" && squares[line[1]] === "x") ||
+      (squares[line[1]] === "x" && squares[line[2]] === "x") ||
+      (squares[line[0]] === "x" && squares[line[2]] === "x")
     ) {
-      if (state[line[0]] === "") {
-        newState = {
-          ...newState,
-          index: line[0],
-        };
+      if (squares[line[0]] === "") {
+        squares[line[0]] = "o";
+        find = true;
+        break;
       }
-      if (state[line[1]] === "") {
-        newState = {
-          ...newState,
-          index: line[1],
-        };
+      if (squares[line[1]] === "") {
+        squares[line[1]] = "o";
+        find = true;
+        break;
       }
-      if (state[line[2]] === "") {
-        newState = {
-          ...newState,
-          index: line[2],
-        };
-      }
-    }
-    continue;
-  }
-
-  if (!newState.index) {
-    const squares = [...state];
-    const countLast: number[] = squares
-      .map((el, i) => (el === "" ? i : -1))
-      .filter((el) => el !== -1);
-    for (let i in squares) {
-      let random = Math.floor(Math.random() * squares.length);
-      if (
-        squares[random] === "" ||
-        countLast.length === 1 // Si ne reste qu'une case vide est que le random ne correspondent pas a une case de jeu vide
-      ) {
-        squares[random] === ""
-          ? (squares[random] = "o")
-          : (squares[countLast[0]] = "o");
+      if (squares[line[2]] === "") {
+        squares[line[2]] = "o";
+        find = true;
         break;
       }
     }
-    newState = { newSquares: squares, ...squares };
   }
-
-  return newState;
+  if (!find) {
+    await playIaRandom(squares);
+  }
 };

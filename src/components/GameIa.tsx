@@ -2,7 +2,11 @@ import { AnimatePresence } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Line from "./Line";
-import { calculateWinner, playIaIntermediateLevel } from "../utils";
+import {
+  calculateWinner,
+  playIaIntermediateLevel,
+  playIaRandom,
+} from "../utils";
 
 type GameIaProps = {
   setPlayIa: (value: boolean) => void;
@@ -81,36 +85,18 @@ function GameIa({ setPlayIa }: GameIaProps) {
   }, [state]);
 
   useEffect(() => {
-    if (iaPlay) {
-      let squares = [...state];
-      if (iaLevel === 0) {
-        const countLast: number[] = squares
-          .map((el, i) => (el === "" ? i : -1))
-          .filter((el) => el !== -1);
-
-        for (let i in squares) {
-          let random = Math.floor(Math.random() * squares.length);
-          if (
-            squares[random] === "" ||
-            countLast.length === 1 // Si ne reste qu'une case vide est que le random ne correspondent pas a une case de jeu vide
-          ) {
-            squares[random] === ""
-              ? (squares[random] = "o")
-              : (squares[countLast[0]] = "o");
-            break;
-          }
+    (async () => {
+      if (iaPlay) {
+        let squares = [...state];
+        if (iaLevel === 0) {
+          await playIaRandom(squares);
         }
-      }
-      if (iaLevel === 1) {
-        const { newSquares, index } = playIaIntermediateLevel(state);
-        if (index) {
-          squares[index] = "o";
-        } else if (newSquares) {
-          squares = newSquares;
+        if (iaLevel === 1) {
+          await playIaIntermediateLevel(squares);
         }
+        setState(squares);
       }
-      setState(squares);
-    }
+    })();
   }, [iaPlay]);
 
   const reinitialize = () => {
@@ -118,7 +104,6 @@ function GameIa({ setPlayIa }: GameIaProps) {
     setResult({ state: "", winner: "", dir: "" });
   };
 
-  // Gere le comportement lors du click sur un carré de jeu
   const handleClickCase = (index: number) => {
     const squares = [...state];
     if (squares[index] !== "" || result.state !== "" || !turn) return;
@@ -141,7 +126,10 @@ function GameIa({ setPlayIa }: GameIaProps) {
             <motion.form className="p-4 sm:p-6 bg-[#17235c] rounded-md relative">
               <div className="flex flex-col gap-y-6 sm:gap-y-6 text-white">
                 <div className="grid grid-cols-[2,_1fr] sm:grid-cols-[70px,_1fr] gap-4 items-center">
-                  <label htmlFor="name1" className="inline-block max-w-fit">
+                  <label
+                    htmlFor="name1"
+                    className="inline-block max-w-fit sm:justify-self-end"
+                  >
                     Joueur 1:
                   </label>
                   <input
@@ -156,36 +144,40 @@ function GameIa({ setPlayIa }: GameIaProps) {
                   />
                 </div>
                 <div className="grid grid-cols-[2,_1fr] sm:grid-cols-[70px,_1fr] gap-4 items-center">
-                  <label htmlFor="name1" className="inline-block max-w-fit">
+                  <label
+                    htmlFor="level"
+                    className="inline-block max-w-fit sm:justify-self-end"
+                  >
                     Niveau:
                   </label>
                   <div className="flex gap-x-4">
                     <div className="flex gap-2 border-[1px] border-white/20 rounded-sm py-1 px-2">
                       <input
                         type="radio"
-                        name="easy"
-                        id="easy"
+                        name="level"
+                        id="level"
                         onChange={() => setIaLevel(0)}
                       />
-                      <label htmlFor="easy">Facile</label>
+                      Facile
                     </div>
                     <div className="flex gap-2 border-[1px] border-white/20 rounded-sm py-1 px-2">
                       <input
                         type="radio"
-                        name="easy"
-                        id="easy"
+                        name="level"
+                        id="level"
                         onChange={() => setIaLevel(1)}
                       />
-                      <label htmlFor="easy">Moyen</label>
+                      Moyen
                     </div>
                     <div className="flex gap-2 border-[1px] border-white/20 rounded-sm py-1 px-2">
                       <input
                         type="radio"
-                        name="easy"
-                        id="easy"
+                        name="level"
+                        id="level"
                         onChange={() => setIaLevel(2)}
+                        disabled
                       />
-                      <label htmlFor="easy">Difficile</label>
+                      Difficile
                     </div>
                   </div>
                 </div>

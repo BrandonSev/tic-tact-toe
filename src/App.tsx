@@ -32,6 +32,7 @@ const variantsChild = {
 function App() {
   const [play, setPlay] = useState<boolean>(false);
   const [playIa, setPlayIa] = useState<boolean>(false);
+  const [playMulti, setPlayMulti] = useState<boolean>(false);
 
   return (
     <>
@@ -97,7 +98,7 @@ function App() {
                 initial={{ scaleX: 0, opacity: 0 }}
                 animate={{ scaleX: 1, opacity: 1 }}
                 transition={{ ease: "circOut", delay: 1.4 }}
-                onClick={() => setPlay(true)}
+                onClick={() => setPlayMulti(true)}
               >
                 Multiplayer
               </motion.button>
